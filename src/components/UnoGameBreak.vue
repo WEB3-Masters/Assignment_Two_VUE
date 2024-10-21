@@ -6,7 +6,6 @@
     <button @click="newRound"></button>
 </template>
 
-<script setup>
-import 
+<script setup> 
 </script>
 
