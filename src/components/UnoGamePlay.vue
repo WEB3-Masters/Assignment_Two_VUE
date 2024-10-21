@@ -57,6 +57,11 @@ const currentPlayer = ref<number>(0);
 const winner = ref<number | undefined>(undefined);
 
 let message = "";
+let gameTwo = createGame({
+  players: players,
+  targetScore: targetScore,
+  cardsPerPlayer: 7,
+});
 
 const startGame = () => {
   game.value = createGame({
