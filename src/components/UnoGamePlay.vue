@@ -237,6 +237,9 @@ startGame();
   align-items: center;
   font-size: 12px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+  color: #1f1f1f;
+  display: flex;
+  justify-content: center;
 }
 
 button {
@@ -250,6 +253,7 @@ button {
   font-size: 12px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   cursor: pointer;
+  color: #1f1f1f;
 }
 
 button:hover {
