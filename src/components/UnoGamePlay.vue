@@ -3,7 +3,10 @@
     <h1>UNO</h1>
     <p>Target score: {{ targetScore }}</p>
     <p>Current player: {{ currentPlayer + 1 }}</p>
-    <p class="message">{{ message }}</p>
+    <p class="message">
+      First card is: {{ topDiscardCard?.value?.type }}
+      {{ topDiscardCard.value?.color }} {{ topDiscardCard.value?.number }}
+    </p>
 
     <div class="decks">
       <div class="card">
@@ -41,6 +44,8 @@
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { createGame, Game } from "../model/uno";
+import { Hand } from "../model/hand";
+import { decideMove } from "../model/BotAI";
 
 const route = useRoute();
 const numPlayers = Number(route.query.numPlayers);
@@ -86,29 +91,11 @@ const drawPileSize = computed(() => game.value?.hand?.drawPile().size ?? 0);
 //<---- In game methods ---->
 const playCard = (cardIndex: number) => {
   try {
-    let card = game.value?.hand?.play(cardIndex);
-    message = "";
-    message +=
-      "Player " +
-      (currentPlayer.value + 1) +
-      " played: " +
-      card?.type +
-      " " +
-      card?.color +
-      " " +
-      card?.number;
-    console.log(
-      "Player " +
-        currentPlayer.value +
-        " played: " +
-        card?.type +
-        " " +
-        card?.color +
-        " " +
-        card?.number
-    );
-
+    game.value?.hand?.play(cardIndex);
     currentPlayer.value = game.value?.hand?.playerInTurn() ?? 0;
+    if (currentPlayer.value !== 0) {
+      decideNextMove();
+    }
     console.log("Player " + (currentPlayer.value + 1) + "'s turn");
   } catch (error) {
     console.error("Cannot play this card");
@@ -158,6 +145,38 @@ const endGame = () => {
   router.push({
     name: "End",
   });
+};
+
+const decideNextMove = () => {
+  // Safely access the hand property, ensure it's not undefined and valid
+  const bots: ("easy" | "medium" | "hard")[] = [];
+  const hand: Hand | undefined = game?.value?.hand;
+
+  if (!hand) {
+    console.error("Hand is undefined or not properly initialized");
+    return;
+  }
+
+  // Validate if hand has all required properties
+  // if (!hand.players || !hand.playerHands || !hand._drawPile) {
+  //   console.error("Hand is missing required properties");
+  //   return;
+  // }
+
+  // Proceed with move decision if hand is valid
+  const currentPlayerIndex = game?.value?.hand?.playerInTurn() ?? 0;
+  const move = decideMove(hand, bots[currentPlayerIndex - 1]);
+  console.log("MOVE: ", move);
+
+  if (move === "draw") {
+    game?.value?.hand?.draw();
+    return;
+  }
+
+  if (move.nextColor) {
+    alert("Next Color is: " + move.nextColor);
+  }
+  game.value?.hand?.play(move.cardIndex, move.nextColor);
 };
 
 startGame();
@@ -210,6 +229,7 @@ startGame();
 .discard {
   width: 150px;
   height: 225px;
+  color: #101010;
   background-color: #ffffff;
   border: 2px solid #000;
   border-radius: 10px;
@@ -222,6 +242,7 @@ startGame();
 button {
   width: 100px;
   height: 150px;
+
   background-color: #ffffff;
   border: 2px solid #000;
   border-radius: 10px;
@@ -232,6 +253,7 @@ button {
 }
 
 button:hover {
+  color: #101010;
   background-color: #f0f0f0;
 }
 
