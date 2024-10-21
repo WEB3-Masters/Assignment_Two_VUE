@@ -43,9 +43,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { createGame, Game } from "../model/uno";
+import { Game } from "../model/uno";
 import { Hand } from "../model/hand";
 import { decideMove } from "../model/BotAI";
+import { useGameStore } from "../stores/GameStore";
 
 const route = useRoute();
 const numPlayers = Number(route.query.numPlayers);
@@ -57,7 +58,7 @@ const currentPlayer = ref<number>(0);
 const winner = ref<number | undefined>(undefined);
 
 let message = "";
-let gameTwo = createGame({
+let gameTwo = useGameStorecreateGame({
   players: players,
   targetScore: targetScore,
   cardsPerPlayer: 7,
