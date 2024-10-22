@@ -58,35 +58,11 @@ const currentPlayer = ref<number>(0);
 const winner = ref<number | undefined>(undefined);
 
 let message = "";
-let gameTwo = useGameStorecreateGame({
-  players: players,
-  targetScore: targetScore,
-  cardsPerPlayer: 7,
-});
-
-const startGame = () => {
-  game.value = createGame({
-    players: players,
-    targetScore: targetScore,
-    cardsPerPlayer: 7,
-  });
-  currentPlayer.value = game.value?.hand?.playerInTurn() ?? 0;
-  message +=
-    "First card is: " +
-    topDiscardCard.value?.type +
-    " " +
-    topDiscardCard.value?.color +
-    " " +
-    topDiscardCard.value?.number;
-  console.log(
-    "First card is: " +
-      topDiscardCard.value?.type +
-      " " +
-      topDiscardCard.value?.color +
-      " " +
-      topDiscardCard.value?.number
-  );
-};
+// let gameTwo = useGameStorecreateGame({
+//   players: players,
+//   targetScore: targetScore,
+//   cardsPerPlayer: 7,
+// });
 
 const playerHand = computed(
   () => game.value?.hand?.playerHand(currentPlayer.value) ?? []
@@ -184,8 +160,6 @@ const decideNextMove = () => {
   }
   game.value?.hand?.play(move.cardIndex, move.nextColor);
 };
-
-startGame();
 </script>
 
 <style scoped lang="css">
