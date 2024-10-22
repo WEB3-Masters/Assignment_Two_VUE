@@ -4,8 +4,9 @@
     <p>Target score: {{ targetScore }}</p>
     <p>Current player: {{ currentPlayer + 1 }}</p>
     <p class="message">
-      First card is: {{ topDiscardCard?.value?.type }}
-      {{ topDiscardCard.value?.color }} {{ topDiscardCard.value?.number }}
+      First card is: {{ store.discardPileTopCard?.type }}
+      {{ store.discardPileTopCard?.color }}
+      {{ store.discardPileTopCard?.number }}
     </p>
 
     <div class="decks">
@@ -13,8 +14,9 @@
         <button @click="drawCard">Draw Card {{ drawPileSize }}</button>
       </div>
       <div class="discard">
-        {{ topDiscardCard?.type }} {{ topDiscardCard?.color }}
-        {{ topDiscardCard?.number }}
+        {{ store.discardPileTopCard?.type }}
+        {{ store.discardPileTopCard?.color }}
+        {{ store.discardPileTopCard?.number }}
       </div>
     </div>
 
@@ -49,6 +51,7 @@ import { decideMove } from "../model/BotAI";
 import { useGameStore } from "../stores/GameStore";
 
 const route = useRoute();
+const store = useGameStore();
 const numPlayers = Number(route.query.numPlayers);
 const targetScore = Number(route.query.targetScore); //These don't work
 const players = Array.from({ length: numPlayers }, (_, i) => `Player ${i + 1}`);
@@ -56,13 +59,6 @@ const players = Array.from({ length: numPlayers }, (_, i) => `Player ${i + 1}`);
 const game = ref<Game | undefined>(undefined);
 const currentPlayer = ref<number>(0);
 const winner = ref<number | undefined>(undefined);
-
-let message = "";
-// let gameTwo = useGameStorecreateGame({
-//   players: players,
-//   targetScore: targetScore,
-//   cardsPerPlayer: 7,
-// });
 
 const playerHand = computed(
   () => game.value?.hand?.playerHand(currentPlayer.value) ?? []
