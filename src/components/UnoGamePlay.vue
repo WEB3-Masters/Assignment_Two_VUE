@@ -6,12 +6,17 @@
     <p class="message">{{ message }}</p>
 
     <div class="decks">
-      <div class="card">
-        <button @click="drawCard">Draw Card {{ drawPileSize }}</button>
+
+      <div class='card'>
+        <button class='card-number' @click="drawCard">Draw A Card {{ drawPileSize }}</button>
       </div>
-      <div class="discard">
-        {{ topDiscardCard?.type }} {{ topDiscardCard?.color }}
-        {{ topDiscardCard?.number }}
+
+      <div class="card">
+      <div :class="[topDiscardCard?.color ? topDiscardCard?.color.toLowerCase():'']">
+        <div class="discard">
+        {{ cardDisplay(topDiscardCard) }}
+      </div>
+    </div>
       </div>
     </div>
 
@@ -21,10 +26,12 @@
         <div
           v-for="(card, index) in playerHand"
           :key="index"
-          :class="['card', { playable: isPlayable(index) }]"
+          :class="['card', { playable: isPlayable(index)},card.color?.toLowerCase(),card.type.toLowerCase()]"
         >
-          <button @click="playCard(index)">
-            {{ card.type }} {{ card.color }} {{ card.number }}
+        <button @click="playCard(index)">
+          <div class="card-content">
+          <span class="card-number">{{ cardDisplay(card) }}</span>
+        </div>
           </button>
         </div>
       </div>
@@ -128,7 +135,7 @@ const drawCard = () => {
     console.error("Cannot draw a card");
   }
 };
-//<---- Card behaviour ---->
+//<---- Card display ---->
 const cardsContainer = ref<HTMLDivElement | null>(null);
 watch(
   () => game.value?.hand?.playerHand(currentPlayer.value),
@@ -142,18 +149,24 @@ watch(
   }
 );
 
+const cardDisplay = (card: {type: string, color?: string, number?:number}) => {
+  if (card.type === 'NUMBERED')
+  {return card.number;}
+  else
+  {return card.type;}
+};
+
 const isPlayable = (cardIndex: number) => {
   return game.value?.hand?.canPlay(cardIndex);
 };
 
-const router = useRouter();
 //<--- Navigation --->
+const router = useRouter();
 const newRound = () => {
   router.push({
     name: "Break",
   });
 };
-
 const endGame = () => {
   router.push({
     name: "End",
@@ -178,21 +191,52 @@ startGame();
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   justify-content: start;
-  padding: 10px;
-  gap: 10px;
+  gap: 2px;
 }
 
 .card {
   display: flex;
+  border: 1px solid black;
+  border-radius: 10px;
   flex-direction: column;
   align-items: center;
-  padding: 5px;
+  padding: 0px;
   scroll-snap-align: start;
 }
 
 .card:first-child {
   scroll-margin-left: 10px;
 }
+
+.card-number {
+  color:white;
+  text-shadow: 1px 1px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, -1px 1px 0px #000;
+  font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+  font-size: 20px;
+}
+
+.red {
+  background-color: red;
+  border-radius: 10px;
+}
+.green {
+  background: green;
+  border-radius: 10px;
+}
+.yellow {
+  background-color: yellow;
+  border-radius: 10px;
+}
+.blue {
+  background-color: blue;
+  border-radius: 10px;
+}
+.wild {
+  background: linear-gradient(45deg, red,yellow, green, blue);
+  border-radius: 100%;
+}
+
+
 
 .playable:hover {
   border: 2px solid rgb(2, 200, 255);
@@ -205,28 +249,31 @@ startGame();
   justify-content: center;
   max-width: 100%;
   align-items: center;
+  gap: 5px;
 }
 
 .discard {
   width: 150px;
   height: 225px;
-  background-color: #ffffff;
-  border: 2px solid #000;
+  background-color: inherit;
+  border: 2px solid white;
   border-radius: 10px;
   text-align: center;
   align-items: center;
-  font-size: 12px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-  color: #1f1f1f;
+  font-size: 30px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.15);
   display: flex;
   justify-content: center;
+  color:white;
+  text-shadow: 1px 1px 0px #000, -1px -1px 0px #000, 1px -1px 0px #000, -1px 1px 0px #000;
+  font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
 }
 
 button {
   width: 100px;
   height: 150px;
-  background-color: #ffffff;
-  border: 2px solid #000;
+  background-color: inherit;
+  border: 2px solid white;
   border-radius: 10px;
   text-align: center;
   font-size: 12px;
@@ -236,13 +283,11 @@ button {
 }
 
 button:hover {
-  background-color: #f0f0f0;
+  background-color: #f0f0f062;
 }
 
 .gameplay {
   text-align: center;
-  /* background: #233142;
-   */
 }
 
 .testBtn {
