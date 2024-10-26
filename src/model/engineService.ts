@@ -61,6 +61,10 @@ export class EngineService implements EngineInterface {
 		return card;
 	}
 
+	canPlay(cardIndex: number): boolean | undefined {
+		return this.game.hand?.canPlay(cardIndex);
+	}
+
 	decideMove(): void {
 		const hand = this.game.hand;
 		if (!hand) return;

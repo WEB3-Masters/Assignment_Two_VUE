@@ -50,6 +50,10 @@ export const useGameStore = defineStore("game", () => {
 		}
 	}
 
+	function canPlay(cardIndex: number) {
+		return engineService.canPlay(cardIndex);
+	}
+
 	function draw() {
 		engineService.draw();
 		updateAllPlayerDecks();
@@ -156,6 +160,7 @@ export const useGameStore = defineStore("game", () => {
 		isPlayerInTurn,
 		currentPlayerInTurn,
 		play,
+		canPlay,
 		draw,
 		sayUno,
 		catchUnoFailure,

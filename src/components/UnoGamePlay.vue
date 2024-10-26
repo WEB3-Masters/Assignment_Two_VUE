@@ -4,14 +4,22 @@
     <p>Target score: {{ targetScore }}</p>
     <p>Current player: {{ store.currentPlayerInTurn() }}</p>
     <p class="message">
-      First card is: {{ store.discardPileTopCard?.type }}
+      Discard Pile: {{ store.discardPileTopCard?.type }}
       {{ store.discardPileTopCard?.color }}
       {{ store.discardPileTopCard?.number }}
     </p>
 
     <div class="decks">
       <div class="card">
-        <button @click="drawCard">Draw Card {{ drawPileSize }}</button>
+        <button
+          @click="
+            {
+              store.draw();
+            }
+          "
+        >
+          Draw Card {{ drawPileSize }}
+        </button>
       </div>
       <div class="discard">
         {{ store.discardPileTopCard?.type }}
@@ -20,20 +28,10 @@
       </div>
     </div>
 
-    <div class="playerhand" ref="cardsContainer">
-      <h2>Player {{ currentPlayer + 1 }}'s hand</h2>
-      <div class="cards">
-        <div
-          v-for="(card, index) in playerHand"
-          :key="index"
-          :class="['card', { playable: isPlayable(index) }]"
-        >
-          <button @click="playCard(index)">
-            {{ card.type }} {{ card.color }} {{ card.number }}
-          </button>
-        </div>
-      </div>
-    </div>
+    <PlayerHand
+      :cards="store.players[playerIndex].deck"
+      :isActive="store.isPlayerInTurn(playerIndex)"
+    />
 
     <p v-if="winner">Player {{ winner + 1 }} wins the round!</p>
 
@@ -43,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import PlayerHand from "../components/PlayerHand.vue";
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Game } from "../model/uno";
@@ -59,40 +58,8 @@ const players = Array.from({ length: numPlayers }, (_, i) => `Player ${i + 1}`);
 const game = ref<Game | undefined>(undefined);
 const currentPlayer = ref<number>(0);
 const winner = ref<number | undefined>(undefined);
+const playerIndex = 0;
 
-const playerHand = computed(
-  () => game.value?.hand?.playerHand(currentPlayer.value) ?? []
-);
-const topDiscardCard = computed(() => game.value?.hand?.discardPile().top());
-const drawPileSize = computed(() => game.value?.hand?.drawPile().size ?? 0);
-
-//<---- In game methods ---->
-const playCard = (cardIndex: number) => {
-  try {
-    game.value?.hand?.play(cardIndex);
-    currentPlayer.value = game.value?.hand?.playerInTurn() ?? 0;
-    if (currentPlayer.value !== 0) {
-      decideNextMove();
-    }
-    console.log("Player " + (currentPlayer.value + 1) + "'s turn");
-  } catch (error) {
-    console.error("Cannot play this card");
-  }
-};
-
-//TODO: Handle not being able to draw more than 1 card - and only play the drawn card
-const drawCard = () => {
-  try {
-    game.value?.hand?.draw();
-    console.log("player " + currentPlayer.value + " has drawn a card.");
-    if (!game.value?.hand?.canPlay(playerHand.value.length - 1)) {
-      currentPlayer.value = game.value?.hand?.playerInTurn() ?? 0;
-      console.log("Player " + currentPlayer.value + "'s turn");
-    }
-  } catch (error) {
-    console.error("Cannot draw a card");
-  }
-};
 //<---- Card behaviour ---->
 const cardsContainer = ref<HTMLDivElement | null>(null);
 watch(
@@ -107,10 +74,6 @@ watch(
   }
 );
 
-const isPlayable = (cardIndex: number) => {
-  return game.value?.hand?.canPlay(cardIndex);
-};
-
 const router = useRouter();
 //<--- Navigation --->
 const newRound = () => {
@@ -124,59 +87,9 @@ const endGame = () => {
     name: "End",
   });
 };
-
-const decideNextMove = () => {
-  // Safely access the hand property, ensure it's not undefined and valid
-  const bots: ("easy" | "medium" | "hard")[] = [];
-  const hand: Hand | undefined = game?.value?.hand;
-
-  if (!hand) {
-    console.error("Hand is undefined or not properly initialized");
-    return;
-  }
-
-  // Validate if hand has all required properties
-  // if (!hand.players || !hand.playerHands || !hand._drawPile) {
-  //   console.error("Hand is missing required properties");
-  //   return;
-  // }
-
-  // Proceed with move decision if hand is valid
-  const currentPlayerIndex = game?.value?.hand?.playerInTurn() ?? 0;
-  const move = decideMove(hand, bots[currentPlayerIndex - 1]);
-  console.log("MOVE: ", move);
-
-  if (move === "draw") {
-    game?.value?.hand?.draw();
-    return;
-  }
-
-  if (move.nextColor) {
-    alert("Next Color is: " + move.nextColor);
-  }
-  game.value?.hand?.play(move.cardIndex, move.nextColor);
-};
 </script>
 
 <style scoped lang="css">
-.playerhand {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 100%;
-}
-
-.cards {
-  display: flex;
-  max-width: 100%;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  justify-content: start;
-  padding: 10px;
-  gap: 10px;
-}
-
 .card {
   display: flex;
   flex-direction: column;
@@ -187,12 +100,6 @@ const decideNextMove = () => {
 
 .card:first-child {
   scroll-margin-left: 10px;
-}
-
-.playable:hover {
-  border: 2px solid rgb(2, 200, 255);
-  border-radius: 10px;
-  background-color: rgb(144, 233, 238);
 }
 
 .decks {
