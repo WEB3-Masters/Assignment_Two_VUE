@@ -2,7 +2,7 @@
   <div class="gameplay">
     <h1>UNO</h1>
     <p>Target score: {{ targetScore }}</p>
-    <p>Current player: {{ currentPlayer + 1 }}</p>
+    <p>Current player: {{ store.currentPlayerInTurn() }}</p>
     <p class="message">
       First card is: {{ store.discardPileTopCard?.type }}
       {{ store.discardPileTopCard?.color }}
@@ -53,7 +53,7 @@ import { useGameStore } from "../stores/GameStore";
 const route = useRoute();
 const store = useGameStore();
 const numPlayers = Number(route.query.numPlayers);
-const targetScore = Number(route.query.targetScore); //These don't work
+const targetScore = store.getTargetScore();
 const players = Array.from({ length: numPlayers }, (_, i) => `Player ${i + 1}`);
 
 const game = ref<Game | undefined>(undefined);

@@ -64,6 +64,11 @@ export const useGameStore = defineStore("game", () => {
 		return index === currentPlayerIndex.value;
 	}
 
+	function currentPlayerInTurn(): number {
+		return currentPlayerIndex.value+1;
+	}
+
+
 	function sayUno(index: number) {
 		engineService.sayUno(index);
 		updateAllPlayerDecks();
@@ -149,6 +154,7 @@ export const useGameStore = defineStore("game", () => {
 		createGame,
 		getPlayerScore,
 		isPlayerInTurn,
+		currentPlayerInTurn,
 		play,
 		draw,
 		sayUno,
