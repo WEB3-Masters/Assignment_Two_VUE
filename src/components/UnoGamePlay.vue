@@ -4,10 +4,10 @@
     <p>Target score: {{ targetScore }}</p>
     <p>
       Current player:
-      {{ store.players[store.currentPlayerInTurn()].deck.length }}
+      {{ store.currentPlayerInTurn() }}
     </p>
     <Button
-      v-if="store.players[store.currentPlayerInTurn()].deck.length === 1"
+      v-if="store.players[store.currentPlayerInTurn() - 1]?.deck?.length === 1"
       @click="
         () => {
           // Assuming the accuser (you) is of index 0
@@ -52,8 +52,7 @@
 
     <p v-if="winner">Player {{ winner + 1 }} wins the round!</p>
 
-    <button class="testBtn" @click="newRound()">Break</button>
-    <button class="testBtn" @click="endGame()">End</button>
+    <button class="testBtn" @click="navigateToBreakScreen()">Break</button>
   </div>
 </template>
 
@@ -72,36 +71,18 @@ const numPlayers = Number(route.query.numPlayers);
 const targetScore = store.getTargetScore();
 const players = Array.from({ length: numPlayers }, (_, i) => `Player ${i + 1}`);
 
-const game = ref<Game | undefined>(undefined);
 const currentPlayer = store.currentPlayerInTurn();
 const winner = ref<number | undefined>(undefined);
 const playerIndex = 0;
 
 //<---- Card behaviour ---->
 const cardsContainer = ref<HTMLDivElement | null>(null);
-watch(
-  () => game.value?.hand?.playerHand(currentPlayer),
-  () => {
-    if (cardsContainer.value) {
-      cardsContainer.value.scrollTo({
-        left: cardsContainer.value.scrollWidth,
-        behavior: "smooth", // Smooth scrolling
-      });
-    }
-  }
-);
 
 const router = useRouter();
 //<--- Navigation --->
-const newRound = () => {
+const navigateToBreakScreen = () => {
   router.push({
     name: "Break",
-  });
-};
-
-const endGame = () => {
-  router.push({
-    name: "End",
   });
 };
 </script>
