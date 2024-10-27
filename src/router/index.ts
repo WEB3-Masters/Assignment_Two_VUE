@@ -4,7 +4,9 @@ import UnoGamePlay from '../components/UnoGamePlay.vue';
 import UnoGameBreak from '../components/UnoGameBreak.vue';
 import UnoGameOver from '../components/UnoGameOver.vue';
 
-const routes = [
+const router = createRouter({
+	history: createWebHistory(import.meta.env.BASE_URL),
+    routes:[
     {   
         path: '/', 
         name:'Setup', 
@@ -14,19 +16,17 @@ const routes = [
         name:'Game', 
         component:UnoGamePlay, 
     },
-    {   path:'/game/break',
-        name:'Break', 
-        component:UnoGameBreak, 
+    {
+        path: "/over",
+        name: "game over",
+        component: UnoGameOver,
     },
-    {  path:'/game/over',name:'End', 
-        component:UnoGameOver, 
-        props: true
-    }
-];
-
-const router = createRouter({
-    history: createWebHistory(),
-    routes,
+    {
+        path: "/break",
+        name: "Break",
+        component: UnoGameBreak,
+    },
+],
 });
 
 export default router;

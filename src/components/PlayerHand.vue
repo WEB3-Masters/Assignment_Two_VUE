@@ -16,6 +16,9 @@
         </button>
       </div>
     </div>
+    <Button @click="() => store.sayUno(playerIndex)" v-if="cards.length === 1"
+      >Say Uno!</Button
+    >
   </div>
 </template>
 

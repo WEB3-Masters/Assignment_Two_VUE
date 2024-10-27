@@ -2,7 +2,24 @@
   <div class="gameplay">
     <h1>UNO</h1>
     <p>Target score: {{ targetScore }}</p>
-    <p>Current player: {{ store.currentPlayerInTurn() }}</p>
+    <p>
+      Current player:
+      {{ store.players[store.currentPlayerInTurn()].deck.length }}
+    </p>
+    <Button
+      v-if="store.players[store.currentPlayerInTurn()].deck.length === 1"
+      @click="
+        () => {
+          // Assuming the accuser (you) is of index 0
+          store.catchUnoFailure({
+            accuser: 0,
+            accused: store.currentPlayerInTurn(),
+          });
+          store.updateAllPlayerDecks();
+        }
+      "
+      >Accuse</Button
+    >
     <p class="message">
       Discard Pile: {{ store.discardPileTopCard?.type }}
       {{ store.discardPileTopCard?.color }}
@@ -56,14 +73,14 @@ const targetScore = store.getTargetScore();
 const players = Array.from({ length: numPlayers }, (_, i) => `Player ${i + 1}`);
 
 const game = ref<Game | undefined>(undefined);
-const currentPlayer = ref<number>(0);
+const currentPlayer = store.currentPlayerInTurn();
 const winner = ref<number | undefined>(undefined);
 const playerIndex = 0;
 
 //<---- Card behaviour ---->
 const cardsContainer = ref<HTMLDivElement | null>(null);
 watch(
-  () => game.value?.hand?.playerHand(currentPlayer.value),
+  () => game.value?.hand?.playerHand(currentPlayer),
   () => {
     if (cardsContainer.value) {
       cardsContainer.value.scrollTo({
