@@ -194,7 +194,7 @@ export class Hand {
     this.playerUnos[this._playerInTurn] = false;
 
     // Move to a next player if there is no playable cards
-    if (!this.canPlayAny()) this.nextPlayer();
+    if (!this.canPlay(this.playerHand.length-1)) this.nextPlayer();
   }
 
   sayUno(playerIndex: number) {

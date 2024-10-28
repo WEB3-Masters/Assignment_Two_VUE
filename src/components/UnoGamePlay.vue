@@ -14,7 +14,7 @@
       <div class="card">
       <div :class="[topDiscardCard?.color ? topDiscardCard?.color.toLowerCase():'']">
         <div class="discard">
-        {{ cardDisplay(topDiscardCard) }}
+        {{cardDisplay?(topDiscardCard) }}
       </div>
     </div>
       </div>
