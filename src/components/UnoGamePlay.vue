@@ -6,7 +6,7 @@
       Current player:
       {{ store.currentPlayerInTurn() }}
     </p>
-    <Button
+    <button
       v-if="store.players[store.currentPlayerInTurn() - 1]?.deck?.length === 1"
       @click="
         () => {
@@ -16,10 +16,9 @@
             accused: store.currentPlayerInTurn(),
           });
           store.updateAllPlayerDecks();
-        }
-      "
-      >Accuse</Button
-    >
+        }">
+      Accuse
+    </button>
     <p class="message">
       Discard Pile: {{ store.discardPileTopCard?.type }}
       {{ store.discardPileTopCard?.color }}
@@ -28,14 +27,14 @@
 
     <div class="decks">
       <div class="card">
-        <button
+        <button class="draw"
           @click="
             {
               store.draw();
             }
           "
         >
-          Draw Card {{ drawPileSize }}
+          Draw Card
         </button>
       </div>
       <div class="discard">
@@ -44,7 +43,7 @@
         {{ store.discardPileTopCard?.number }}
       </div>
     </div>
-
+    
     <PlayerHand
       :cards="store.players[playerIndex].deck"
       :isActive="store.isPlayerInTurn(playerIndex)"
@@ -64,6 +63,7 @@ import { Game } from "../model/uno";
 import { Hand } from "../model/hand";
 import { decideMove } from "../model/BotAI";
 import { useGameStore } from "../stores/GameStore";
+import ColorSelector from "./ColorSelector.vue";
 
 const route = useRoute();
 const store = useGameStore();
@@ -105,6 +105,18 @@ const navigateToBreakScreen = () => {
   justify-content: center;
   max-width: 100%;
   align-items: center;
+}
+
+.draw {
+  background-color: #101010;
+  color:#ffffff;
+}
+
+.colorselector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
 }
 
 .discard {
