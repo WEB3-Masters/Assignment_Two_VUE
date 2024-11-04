@@ -1,4 +1,5 @@
 <template>
+  <div class="mainview">
   <h1>GAME SETUP</h1>
   <div>
     <label>
@@ -21,6 +22,7 @@
   </ul>
 
   <button @click="createGame">Play</button>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -42,3 +44,13 @@ function createGame() {
   router.push("/game");
 }
 </script>
+
+<style>
+.mainview {
+  display:flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content: center;
+}
+
+</style>

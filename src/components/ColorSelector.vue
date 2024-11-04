@@ -38,7 +38,8 @@
   }
 
   .color:hover {
-    scale: 400%;
+    transform: scale(1.5);
+    z-index: 1;
   }
 
   .red { background-color: red; }

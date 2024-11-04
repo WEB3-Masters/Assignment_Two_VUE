@@ -71,7 +71,7 @@ function isPlayable(index: number): boolean {
   align-items: center;
   max-width: 100%;
 }
-  
+
 .colorselector {
   max-width: 100%;
   flex-direction: column;

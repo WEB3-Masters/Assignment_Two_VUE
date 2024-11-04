@@ -27,12 +27,14 @@
 
     <div class="decks">
       <div class="card">
-        <button class="draw"
+        <button
           @click="
             {
-              store.draw();
+              drawCard();
             }
           "
+          :disabled = "drawnThisTurn"
+          :class="{inactive: drawnThisTurn}"
         >
           Draw Card
         </button>
@@ -73,18 +75,40 @@ const players = Array.from({ length: numPlayers }, (_, i) => `Player ${i + 1}`);
 
 const currentPlayer = store.currentPlayerInTurn();
 const winner = ref<number | undefined>(undefined);
+const drawnThisTurn = ref(false);
 const playerIndex = 0;
 
 //<---- Card behaviour ---->
 const cardsContainer = ref<HTMLDivElement | null>(null);
+ 
+
+watch (
+  () => store.currentPlayerInTurn(),
+  (newPlayer) => {
+    if(newPlayer !== currentPlayer) {
+      drawnThisTurn.value = false;
+    }
+  }
+)
+
+function drawCard()
+{
+  if(!drawnThisTurn.value)
+  {
+    store.draw();
+    drawnThisTurn.value = true;
+  }
+}
 
 const router = useRouter();
+
 //<--- Navigation --->
 const navigateToBreakScreen = () => {
   router.push({
     name: "Break",
   });
 };
+
 </script>
 
 <style scoped lang="css">
@@ -138,15 +162,14 @@ const navigateToBreakScreen = () => {
 button {
   width: 100px;
   height: 150px;
-
-  background-color: #ffffff;
+  background-color: #101010;
   border: 2px solid #000;
   border-radius: 10px;
   text-align: center;
   font-size: 12px;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  color: #1f1f1f;
+  color: whitesmoke;
 }
 
 button:hover {
@@ -171,5 +194,11 @@ button:hover {
 
 .testBtn:hover {
   background-color: rgb(249, 171, 171);
+}
+
+.inactive {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 </style>
