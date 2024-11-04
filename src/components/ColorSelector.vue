@@ -38,8 +38,9 @@
   }
 
   .color:hover {
-    transform: scale(1.5);
+    transform: scale(1.1);
     z-index: 1;
+    border: 2px solid aqua;
   }
 
   .red { background-color: red; }

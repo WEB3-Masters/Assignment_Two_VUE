@@ -57,6 +57,11 @@ export class EngineService implements EngineInterface {
 
 	play(cardIndex: number, nextColor?: CardColor): Card | undefined {
 		const card = this.game.hand?.play(cardIndex, nextColor);
+		if(card?.type === 'WILD' || card?.type === 'WILD DRAW')
+		{
+			if(!nextColor) throw new Error("Wild card needs a color");
+			card.color = nextColor;
+		}
 		this.discardPileTopCardRef.value = this.game.hand?.discardPile().top();
 		return card;
 	}
