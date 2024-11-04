@@ -39,10 +39,14 @@
           Draw Card
         </button>
       </div>
-      <div class="discard">
-        {{ store.discardPileTopCard?.type }}
-        {{ store.discardPileTopCard?.color }}
-        {{ store.discardPileTopCard?.number }}
+      <div 
+      class="discard"
+      :style="{backgroundColor: store.discardPileTopCard?.color?.toUpperCase()|| '#ccc'}"
+      >
+        <span class="discard-text">{{ store.discardPileTopCard?.type === 'NUMBERED'
+          ? store.discardPileTopCard?.number
+          : store.discardPileTopCard?.type}}
+        </span>  
       </div>
     </div>
     
@@ -146,9 +150,9 @@ const navigateToBreakScreen = () => {
 .discard {
   width: 150px;
   height: 225px;
-  color: #101010;
+  color: #ffffff;
   background-color: #ffffff;
-  border: 2px solid #000;
+  border: 2px solid white;
   border-radius: 10px;
   text-align: center;
   align-items: center;
@@ -157,6 +161,12 @@ const navigateToBreakScreen = () => {
   color: #1f1f1f;
   display: flex;
   justify-content: center;
+}
+
+.discard-text {
+  color: white;
+  font-size: 30px;
+  text-shadow: 0 0 4px black;
 }
 
 button {
