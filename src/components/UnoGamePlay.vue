@@ -57,6 +57,7 @@
 </template>
 
 <script setup lang="ts">
+
 import PlayerHand from "../components/PlayerHand.vue";
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -65,11 +66,13 @@ import { Hand } from "../model/hand";
 import { decideMove } from "../model/BotAI";
 import { useGameStore } from "../stores/GameStore";
 
+
 const route = useRoute();
 const store = useGameStore();
 const numPlayers = Number(route.query.numPlayers);
 const targetScore = store.getTargetScore();
 const players = Array.from({ length: numPlayers }, (_, i) => `Player ${i + 1}`);
+
 
 const currentPlayer = store.currentPlayerInTurn();
 const winner = ref<number | undefined>(undefined);
@@ -81,13 +84,16 @@ const cardsContainer = ref<HTMLDivElement | null>(null);
 const router = useRouter();
 //<--- Navigation --->
 const navigateToBreakScreen = () => {
+
   router.push({
     name: "Break",
   });
 };
+
 </script>
 
 <style scoped lang="css">
+
 .card {
   display: flex;
   flex-direction: column;

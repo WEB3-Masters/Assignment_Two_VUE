@@ -2,6 +2,7 @@ import { type Shuffler, standardShuffler, swapObjects } from "../utils/random_ut
 import * as deck from "../../src/model/deck";
 
 export type UnoFailure = {
+
   accuser: number;
   accused: number;
 };
@@ -24,6 +25,7 @@ export class Hand {
   public endCallbacks: EndCallback[] = [];
 
   constructor(players: string[], dealer: number, shuffler?: Shuffler<deck.Card>, cardsPerPlayer?: number) {
+
     if (players.length < 2) throw new Error("Not enough player");
     if (players.length > 10) throw new Error("To many players");
     this.players = players;
@@ -48,13 +50,17 @@ export class Hand {
 
   player(index: number): string {
     if (index < 0) throw new Error("Player index out of bounds");
+
     if (index >= this.players.length) throw new Error("Player index out of bounds");
+
     return this.players[index];
   }
 
   playerHand(index: number): deck.Card[] {
     if (index < 0) throw new Error("Player hand index out of bounds");
+
     if (index >= this.playerHands.length) throw new Error("Player hand index out of bounds");
+
     return this.playerHands[index];
   }
 
@@ -80,11 +86,13 @@ export class Hand {
     const cardToPlay = this.playerHand(this._playerInTurn)[cardIndex];
 
     // Check if the cardToPlay is not a Wild or Wild Draw card and check if the nextColor is provided
+
     if (!(cardToPlay.type === "WILD" || cardToPlay.type === "WILD DRAW") && nextColor)
       throw Error("Cannot name a color on a colored card");
 
     if (cardToPlay.type === "WILD" || cardToPlay.type === "WILD DRAW") {
       if (!nextColor) throw Error("Next color is undefined but a wild card was played");
+
       this.selectedColor = nextColor; // Set the selected color for Wild and Wild Draw 4 cards
     }
 
@@ -147,8 +155,10 @@ export class Hand {
 
     // Special handling for reverse, skip, and draw cards
     // Checks if the type of the color is the same as the top discard card and allows the play
+
     if (cardToPlay.type === "REVERSE" || cardToPlay.type === "SKIP" || cardToPlay.type === "DRAW") {
       return cardToPlay.color === topDiscardCard.color || cardToPlay.type === topDiscardCard.type;
+
     }
 
     // If none of the above conditions are met, the card is not playable
@@ -180,6 +190,7 @@ export class Hand {
     if (this.hasEnded()) throw Error("Cannot say UNO, the round has ended");
 
     if (playerIndex < 0) throw new Error("Player hand index out of bounds");
+
     if (playerIndex >= this.playerHands.length) throw new Error("Player hand index out of bounds");
 
     if (this._playerInTurn === playerIndex || this._playerInTurn === this.nextPlayerIndex(playerIndex))
@@ -198,7 +209,9 @@ export class Hand {
     if (
       accusedPlayer.length === 1 &&
       !this.playerUnos[unoFailure.accused] &&
+
       (this._playerInTurn === unoFailure.accused || this._playerInTurn === this.nextPlayerIndex(unoFailure.accused))
+
     ) {
       for (let index = 0; index < 4; index++) {
         let drawnCard = this._drawPile.deal();
@@ -219,7 +232,9 @@ export class Hand {
       if (this.playerHand(index).length === 0) {
         this.calculateScore();
         const winner = this.winner();
+
         if (winner !== undefined) this.endCallbacks.forEach((callback) => callback({ winner }));
+
         return true;
       }
     }
@@ -336,6 +351,7 @@ export class Hand {
     const topDiscardCard = this._discardPile.deal(); // Save the top card from the discard pile
     // Switch the discard and draw piles
     [this._drawPile, this._discardPile] = swapObjects(this._drawPile, this._discardPile);
+
     if (topDiscardCard) this._discardPile.push(topDiscardCard); // Put back the top card to the discard pile
     this.shuffle(); // Reshuffle the draw pile
   }
@@ -350,4 +366,3 @@ export function createHand(
   const hand = new Hand(players, dealer, shuffler, cardsPerPlayer);
   return hand;
 }
-
